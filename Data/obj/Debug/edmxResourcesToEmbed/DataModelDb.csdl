@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="TaskDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Author">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="EmailAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="PhoneNumber" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Books" Relationship="Self.FK_Book_Author" FromRole="Author" ToRole="Book" />
+  </EntityType>
+  <EntityType Name="Book">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="AuthorId" Type="Int32" Nullable="false" />
+    <Property Name="PublishDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="ISBN" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Author" Relationship="Self.FK_Book_Author" FromRole="Book" ToRole="Author" />
+    <NavigationProperty Name="ReadingLogs" Relationship="Self.FK_ReadingLog_Book" FromRole="Book" ToRole="ReadingLog" />
+  </EntityType>
+  <EntityType Name="Reader">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="EmailAdress" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="ReadingLogs" Relationship="Self.FK_ReadingLog_Reader" FromRole="Reader" ToRole="ReadingLog" />
+  </EntityType>
+  <EntityType Name="ReadingLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="BookId" Type="Int32" Nullable="false" />
+    <Property Name="ReaderId" Type="Int32" Nullable="false" />
+    <Property Name="EntryDate" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Book" Relationship="Self.FK_ReadingLog_Book" FromRole="ReadingLog" ToRole="Book" />
+    <NavigationProperty Name="Reader" Relationship="Self.FK_ReadingLog_Reader" FromRole="ReadingLog" ToRole="Reader" />
+  </EntityType>
+  <Association Name="FK_Book_Author">
+    <End Role="Author" Type="Self.Author" Multiplicity="1" />
+    <End Role="Book" Type="Self.Book" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Author">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Book">
+        <PropertyRef Name="AuthorId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ReadingLog_Book">
+    <End Role="Book" Type="Self.Book" Multiplicity="1" />
+    <End Role="ReadingLog" Type="Self.ReadingLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Book">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ReadingLog">
+        <PropertyRef Name="BookId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ReadingLog_Reader">
+    <End Role="Reader" Type="Self.Reader" Multiplicity="1" />
+    <End Role="ReadingLog" Type="Self.ReadingLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reader">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ReadingLog">
+        <PropertyRef Name="ReaderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="TaskDbEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Authors" EntityType="Self.Author" />
+    <EntitySet Name="Books" EntityType="Self.Book" />
+    <EntitySet Name="Readers" EntityType="Self.Reader" />
+    <EntitySet Name="ReadingLogs" EntityType="Self.ReadingLog" />
+    <AssociationSet Name="FK_Book_Author" Association="Self.FK_Book_Author">
+      <End Role="Author" EntitySet="Authors" />
+      <End Role="Book" EntitySet="Books" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ReadingLog_Book" Association="Self.FK_ReadingLog_Book">
+      <End Role="Book" EntitySet="Books" />
+      <End Role="ReadingLog" EntitySet="ReadingLogs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ReadingLog_Reader" Association="Self.FK_ReadingLog_Reader">
+      <End Role="Reader" EntitySet="Readers" />
+      <End Role="ReadingLog" EntitySet="ReadingLogs" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
